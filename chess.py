@@ -51,6 +51,18 @@ class Chess:
 
         print("  +---+---+---+---+---+---+---+---+")
 
+    def __displayInvalidMove(self, player, attempts: int) -> None:
+
+        if player.getName().upper() == "AI":
+            if attempts == 1:
+                print("IA : recherche d'un coup valide...")
+            elif attempts % 25 == 0:
+                print(f"IA : {attempts} tentatives analysees...")
+
+            return
+
+        print("Coup invalide. Essayez encore avec le format e2 e4.\n")
+
     def displayBoard(self) -> None:
 
         print("\n" + "-" * 39)
@@ -186,22 +198,26 @@ class Chess:
             self.displayBoard()
 
             move = ""
+            attempts = 0
+            color_name = self.__getColorName(
+                self.__currentPlayer.getColor()
+            )
+
+            print(
+                f"Tour de {self.__currentPlayer.getName()} "
+                f"({color_name})"
+            )
 
             while not self.isValidMove(move):
-
-                color_name = self.__getColorName(
-                    self.__currentPlayer.getColor()
-                )
-
-                print(
-                    f"Tour de {self.__currentPlayer.getName()} "
-                    f"({color_name})"
-                )
 
                 move = self.__currentPlayer.askMove()
 
                 if not self.isValidMove(move):
-                    print("Coup invalide. Essayez encore avec le format e2 e4.\n")
+                    attempts += 1
+                    self.__displayInvalidMove(
+                        self.__currentPlayer,
+                        attempts
+                    )
 
             self.updateBoard(move)
 
