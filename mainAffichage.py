@@ -6,6 +6,16 @@ def display_board_pretty(game):
     # accès au board (hack nécessaire sans modifier Chess)
     board = game._Chess__board
 
+    white_symbols = {
+        "K": "♔", "Q": "♕", "R": "♖",
+        "B": "♗", "N": "♘", "P": "♙"
+    }
+
+    black_symbols = {
+        "K": "♚", "Q": "♛", "R": "♜",
+        "B": "♝", "N": "♞", "P": "♟"
+    }
+
     print("\n" + "-" * 39)
     print("              ECHIQUIER")
     print("-" * 39)
@@ -20,30 +30,18 @@ def display_board_pretty(game):
             if piece is None:
                 line += " . |"
             else:
-                symbol = str(piece)
-
                 if piece.getColor() == 1:
-                    symbol = symbol.lower()
+                    symbol = black_symbols.get(str(piece).upper(), "?")
+                else:
+                    symbol = white_symbols.get(str(piece).upper(), "?")
 
                 line += f" {symbol} |"
         print(line + f" {row}")
         print("  +---+---+---+---+---+---+---+---+")
 
     print("    a   b   c   d   e   f   g   h")
-    print("Blancs : majuscules | Noirs : minuscules")
+    print("Blancs : ♔ ♕ ♖ ♗ ♘ ♙ | Noirs : ♚ ♛ ♜ ♝ ♞ ♟")
     print("Format attendu : e2 e4\n")
-
-
-def display_invalid_move(player, attempts):
-    if player.getName().upper() == "AI":
-        if attempts == 1:
-            print("IA : recherche d'un coup valide...")
-        elif attempts % 25 == 0:
-            print(f"IA : {attempts} tentatives analysees...")
-
-        return
-
-    print("Coup invalide. Essayez encore avec le format e2 e4.\n")
 
 
 def main():
@@ -54,17 +52,14 @@ def main():
         display_board_pretty(game)
 
         move = ""
-        attempts = 0
-        player = game._Chess__currentPlayer
-        color_name = "Blancs" if player.getColor() == 0 else "Noirs"
-        print(f"Tour de {player.getName()} ({color_name})")
-
         while not game.isValidMove(move):
+            player = game._Chess__currentPlayer
+            color_name = "Blancs" if player.getColor() == 0 else "Noirs"
+            print(f"Tour de {player.getName()} ({color_name})")
             move = game._Chess__currentPlayer.askMove()
 
             if not game.isValidMove(move):
-                attempts += 1
-                display_invalid_move(player, attempts)
+                print("Coup invalide. Essayez encore avec le format e2 e4.\n")
 
         game.updateBoard(move)
         game.switchPlayer()
