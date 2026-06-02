@@ -7,6 +7,8 @@ from Position import Position
 class Chess:
     """Gère globalement la partie d'échecs."""
 
+    BOARD_COLUMNS = "abcdefgh"
+
     def __init__(self):
 
         self.__board = Board()
@@ -17,9 +19,14 @@ class Chess:
 
     def initPlayers(self) -> None:
 
+        print("\n" + "=" * 34)
+        print("        PARTIE D'ECHECS")
+        print("=" * 34)
+        print("Entrez AI comme nom pour activer l'ordinateur.\n")
+
         for i in range(2):
 
-            name = input(f"Nom du joueur {i + 1} : ")
+            name = input(f"Joueur {i + 1} - nom : ")
 
             color = i
 
@@ -33,22 +40,37 @@ class Chess:
 
         self.__currentPlayer = self.__players[0]
 
+    def __getColorName(self, color: int) -> str:
+
+        if color == 0:
+            return "Blancs"
+
+        return "Noirs"
+
+    def __displaySeparator(self) -> None:
+
+        print("  +---+---+---+---+---+---+---+---+")
+
     def displayBoard(self) -> None:
 
-        print("\n  a b c d e f g h")
+        print("\n" + "-" * 39)
+        print("              ECHIQUIER")
+        print("-" * 39)
+        print("    a   b   c   d   e   f   g   h")
+        self.__displaySeparator()
 
         for row in range(8, 0, -1):
 
-            line = str(row) + " "
+            line = str(row) + " |"
 
-            for col in "abcdefgh":
+            for col in self.BOARD_COLUMNS:
 
                 piece = self.__board.getPiece(
                     Position(col, row)
                 )
 
                 if piece is None:
-                    line += ". "
+                    line += " . |"
 
                 else:
 
@@ -58,11 +80,14 @@ class Chess:
                     if piece.getColor() == 1:
                         symbol = symbol.lower()
 
-                    line += symbol + " "
+                    line += f" {symbol} |"
 
-            print(line)
+            print(line + f" {row}")
+            self.__displaySeparator()
 
-        print()
+        print("    a   b   c   d   e   f   g   h")
+        print("Blancs : majuscules | Noirs : minuscules")
+        print("Format attendu : e2 e4\n")
 
     def isValidMove(self, move: str) -> bool:
 
@@ -164,16 +189,19 @@ class Chess:
 
             while not self.isValidMove(move):
 
-                print(
-                    f"Au tour de {self.__currentPlayer.getName()}"
+                color_name = self.__getColorName(
+                    self.__currentPlayer.getColor()
                 )
 
-                print("Format : e2 e4")
+                print(
+                    f"Tour de {self.__currentPlayer.getName()} "
+                    f"({color_name})"
+                )
 
                 move = self.__currentPlayer.askMove()
 
                 if not self.isValidMove(move):
-                    print("Coup invalide.\n")
+                    print("Coup invalide. Essayez encore avec le format e2 e4.\n")
 
             self.updateBoard(move)
 
