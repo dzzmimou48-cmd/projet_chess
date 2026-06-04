@@ -24,11 +24,16 @@ class Knight(Piece):
             if target.getColor() == self.getColor():
                 return False
 
-        return (
+        is_knight_move = (
             (dx == 2 and dy == 1)
             or
             (dx == 1 and dy == 2)
         )
+
+        if not is_knight_move:
+            return False
+
+        return True
 
     def __str__(self):
         return "N"
